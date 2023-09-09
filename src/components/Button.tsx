@@ -20,17 +20,31 @@ interface ButtonProps {
   onPress: () => void;
   style?: PressableProps["style"];
   color?: string;
+  disabled?: boolean;
 }
 
 const Button: FC<ButtonProps> = ({
   label,
   onPress,
   style,
-  color = theme.colors.white
+  color = theme.colors.body,
+  disabled = false
 }) => {
   return (
-    <Pressable style={[styles.btnContainer, style]} {...{ onPress }}>
-      <Text style={{ color }}>{label}</Text>
+    <Pressable
+      style={[
+        styles.btnContainer,
+        style,
+        {
+          backgroundColor: disabled
+            ? theme.colors.disabled
+            : theme.colors.primary
+        }
+      ]}
+      {...{ onPress }}
+      disabled={disabled}
+    >
+      <Text style={{ ...theme.textVariants.body, color }}>{label}</Text>
     </Pressable>
   );
 };
