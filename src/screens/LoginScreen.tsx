@@ -11,14 +11,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef } from "react";
 import { useAtom } from "jotai";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { theme } from "../style/theme";
 import { Button, Input } from "../components";
 import { isAuthenticatedAtom } from "../store/states";
-import type { AppRoutes } from "../navigation/types";
 
 const styles = StyleSheet.create({
   container: {
@@ -32,7 +30,13 @@ const styles = StyleSheet.create({
     ...theme.textVariants.hero,
     paddingBottom: theme.spacing.xl,
     textTransform: "uppercase"
-  }
+  },
+  subHeading: {
+    marginBottom: theme.spacing.l,
+    textAlign: "center",
+    ...theme.textVariants.header
+  },
+  btn: { alignItems: "center", marginTop: theme.spacing.m * 2 }
 });
 
 const LoginSchema = Yup.object().shape({
@@ -43,9 +47,7 @@ const LoginSchema = Yup.object().shape({
     .required("Required")
 });
 
-export const LoginScreen = ({
-  navigation
-}: NativeStackNavigationProp<AppRoutes, "Login">) => {
+export const LoginScreen = () => {
   const passwordInputRef = useRef<TextInput>(null);
   const [_, setIsAuthenticated] = useAtom(isAuthenticatedAtom);
 
@@ -54,19 +56,10 @@ export const LoginScreen = ({
       validationSchema: LoginSchema,
       initialValues: { email: "", password: "", remember: false },
       onSubmit: () => {
-        // setIsAuthenticated(true);
         setIsAuthenticated(async (val: boolean) => !(await val));
-        // navigation.dispatch(
-        //   CommonActions.reset({
-        //     index: 0,
-        //     routes: [{ name: "Home" }]
-        //   })
-        // );
       }
     }
   );
-
-  console.log(!!errors.email, " here ");
 
   return (
     <SafeAreaView style={styles.container}>
@@ -76,13 +69,7 @@ export const LoginScreen = ({
         keyboardVerticalOffset={60}
       >
         <Text style={styles.heroText}>Task Manager</Text>
-        <Text
-          style={{
-            textAlign: "center",
-            marginBottom: theme.spacing.l,
-            ...theme.textVariants.header
-          }}
-        >
+        <Text style={styles.subHeading}>
           Please enter your credentials to access your account
         </Text>
         <>
@@ -118,7 +105,7 @@ export const LoginScreen = ({
           />
         </>
 
-        <View style={{ marginTop: theme.spacing.m * 2, alignItems: "center" }}>
+        <View style={styles.btn}>
           <Button
             label="Log In"
             onPress={handleSubmit}

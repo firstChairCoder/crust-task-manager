@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
 });
 
 interface CustomIconProps {
-  name: string;
+  name: keyof typeof Icon.glyphMap;
   size: number;
   color: string;
   backgroundColor: string;

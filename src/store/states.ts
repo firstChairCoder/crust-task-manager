@@ -8,13 +8,10 @@ export const storage = createJSONStorage(() => AsyncStorage);
 // const content = JSON.stringify(false);
 export const isAuthenticatedAtom = atomWithStorage("isAuth", false, storage);
 
-export const searchQueryAtom = atom<string>("");
-export const searchInputHasFocusAtom = atom<boolean>(false);
-
 export const newTodoAtom = atom<string>("");
 export const newTodoDescriptionAtom = atom<string>("");
 export const todosAtom = atom<Todo[]>([]);
-export const storedTodosAtom = atomWithStorage("todos", [], storage);
+export const storedTodosAtom = atomWithStorage<any[]>("todos", [], storage);
 
 //---------------TODO FUNCTIONS-----------------------------//
 const handleAdd = (
@@ -22,12 +19,6 @@ const handleAdd = (
   title: string,
   description: string
 ): Todo[] => [...todos, { id: Date.now(), title, description, isDone: false }];
-
-const handleUpdate = (todos: Todo[], id: number, text: string): Todo[] =>
-  todos.map((task) => ({
-    ...task,
-    todo: task.id === id ? text : task.todo
-  }));
 
 const handleComplete = (todos: Todo[], id: number): Todo[] =>
   todos.map((todo) =>
@@ -47,13 +38,6 @@ export const addTodoAtom = atom(
     );
     set(newTodoAtom, "");
     set(newTodoDescriptionAtom, "");
-  }
-);
-
-export const updateTodoAtom = atom(
-  () => "",
-  (get, set, { id, text }: { id: number; text: string }) => {
-    set(todosAtom, handleUpdate(get(todosAtom), id, text));
   }
 );
 

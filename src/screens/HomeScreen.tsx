@@ -20,11 +20,19 @@ import { TodoModal } from "../components";
 
 const styles = StyleSheet.create({
   container: {
-    // alignItems: "center",
     backgroundColor: theme.colors.background,
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: theme.spacing.m
+  },
+  plus: {
+    alignItems: "center",
+    backgroundColor: theme.colors.primary,
+    borderRadius: 28,
+    justifyContent: "center",
+    overflow: "hidden",
+    position: "absolute",
+    right: theme.spacing.m
   }
 });
 
@@ -44,11 +52,11 @@ export const HomeScreen = () => {
     setViewId(null);
     setVisible(true);
   }, []);
-  // const showModalWithValues = useCallback((id: number) => {
-
-  // }, [])
-
-  console.log("testingn storage ", storedTodos, " and norms ", todos);
+  const showModalWithValues = useCallback((id: number) => {
+    setIsEditable(false);
+    setVisible(true);
+    setViewId(id);
+  }, []);
 
   useEffect(() => {
     if (todos.length > 0) {
@@ -79,11 +87,7 @@ export const HomeScreen = () => {
           return (
             <TodoCard
               {...{ item }}
-              onPress={() => {
-                setIsEditable(false);
-                setVisible(true);
-                setViewId(item.id);
-              }}
+              onPress={() => showModalWithValues(item.id)}
             />
           );
         }}
@@ -102,18 +106,14 @@ export const HomeScreen = () => {
 
       <Pressable
         onPress={showModal}
-        style={{
-          position: "absolute",
-          bottom: bottom + 16,
-          right: theme.spacing.m,
-          justifyContent: "center",
-          alignItems: "center",
-          height: visible ? 0 : 56,
-          width: visible ? 0 : 56,
-          backgroundColor: theme.colors.primary,
-          borderRadius: 28,
-          overflow: "hidden"
-        }}
+        style={[
+          styles.plus,
+          {
+            bottom: bottom + 16,
+            height: visible ? 0 : 56,
+            width: visible ? 0 : 56
+          }
+        ]}
       >
         <Icon name="plus" color={theme.colors.body} size={34} />
       </Pressable>

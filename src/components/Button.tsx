@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { PressableProps } from "react-native";
+import type { StyleProp, ViewStyle } from "react-native";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 import { theme } from "../style/theme";
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 interface ButtonProps {
   label: string;
   onPress: () => void;
-  style?: PressableProps["style"];
+  style?: StyleProp<ViewStyle>;
   color?: string;
   disabled?: boolean;
 }

@@ -2,6 +2,7 @@ import type { ModalProps } from "react-native";
 import {
   Modal,
   Pressable,
+  StyleSheet,
   Text,
   useWindowDimensions,
   View
@@ -21,34 +22,64 @@ import {
   storedTodosAtom,
   todosAtom
 } from "../store/states";
+import type { Todo } from "../models/todo";
+
+const styles = StyleSheet.create({
+  bg: { height: "100%", position: "absolute", width: "100%" },
+  modalContainer: {
+    aspectRatio: 1.3,
+    backgroundColor: theme.colors.lightGrey,
+    borderColor: theme.colors.grey,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    borderWidth: 1,
+    bottom: 0,
+    elevation: 5,
+    padding: 16,
+    position: "absolute",
+    shadowColor: theme.colors.background,
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    width: "100%"
+  },
+  title: {
+    ...theme.textVariants.header,
+    color: theme.colors.background,
+    marginBottom: 8
+  },
+  sub: {
+    fontSize: 10,
+    fontStyle: "italic",
+    marginTop: theme.spacing.s
+  }
+});
 
 interface TodoModalProps extends ModalProps {
   setVisible: any;
   isEditable?: boolean;
-  viewId?: number;
+  viewId: number | null;
 }
 
 const TodoModal: FC<TodoModalProps> = ({
   onRequestClose,
   setVisible,
   isEditable = true,
-  viewId,
+  viewId = null,
   ...rest
 }) => {
   const { height } = useWindowDimensions();
   const [todos] = useAtom(todosAtom);
-  const [storedTodo, setStoredTodo] = useAtom(storedTodosAtom);
+  const [storedTodo] = useAtom(storedTodosAtom);
   const [todo, setTodo] = useAtom(newTodoAtom);
   const [description, setDescription] = useAtom(newTodoDescriptionAtom);
   const [_, addTodo] = useAtom(addTodoAtom);
 
-  const viewedTask = storedTodo?.filter((todo) => todo.id === viewId);
-
-  console.log("any viewers ", viewedTask);
-
-  // console.log("any todos ", todos);
-  // console.log("any stored here ", storedTodo);
-  // console.log("todo update? ", todo, ".... ", description);
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  const viewedTask = storedTodo?.filter((todo: Todo) => todo.id === viewId);
 
   const handleAddTask = useCallback(() => {
     addTodo();
@@ -62,45 +93,9 @@ const TodoModal: FC<TodoModalProps> = ({
       onRequestClose={onRequestClose}
       {...rest}
     >
-      <Pressable
-        style={{
-          position: "absolute",
-          // backgroundColor: "rgba(0,0,0,0.4)",
-          width: "100%",
-          height: "100%"
-        }}
-        onPress={onRequestClose}
-      />
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          backgroundColor: theme.colors.lightGrey,
-          padding: 16,
-          aspectRatio: 1.3,
-          borderWidth: 1,
-          borderColor: theme.colors.grey,
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
-          width: "100%",
-          minHeight: height * 0.5,
-          shadowColor: theme.colors.background,
-          shadowOffset: {
-            width: 0,
-            height: 2
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5
-        }}
-      >
-        <Text
-          style={{
-            ...theme.textVariants.header,
-            color: theme.colors.background,
-            marginBottom: 8
-          }}
-        >
+      <Pressable style={styles.bg} onPress={onRequestClose} />
+      <View style={[styles.modalContainer, { minHeight: height * 0.5 }]}>
+        <Text style={styles.title}>
           {isEditable ? "Create task" : "View Task"}
         </Text>
 
@@ -108,7 +103,6 @@ const TodoModal: FC<TodoModalProps> = ({
           icon="book-open"
           placeholder="Enter a new task here"
           placeholderTextColor={theme.colors.secondary}
-          // textAlign="center"
           value={viewId ? viewedTask[0].title : todo}
           onChangeText={setTodo}
           inputStyle={[
@@ -119,7 +113,6 @@ const TodoModal: FC<TodoModalProps> = ({
             color: theme.colors.primary,
             fontFamily: todo.length < 1 ? "Poppins" : "PoppinsBold",
             fontSize: todo.length < 1 ? undefined : 18
-            // justifyContent: "center"
           }}
           multiline
           maxLength={50}
@@ -147,15 +140,7 @@ const TodoModal: FC<TodoModalProps> = ({
           maxLength={280}
           editable={isEditable}
         />
-        <Text
-          style={{
-            fontSize: 10,
-            marginTop: theme.spacing.s,
-            fontStyle: "italic"
-          }}
-        >
-          Max 280 chars
-        </Text>
+        <Text style={styles.sub}>Max 280 chars</Text>
 
         <View style={{ flex: 0.7 }} />
 

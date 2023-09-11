@@ -1,17 +1,36 @@
 /* eslint-disable no-nested-ternary */
 import { forwardRef } from "react";
 import { Feather as Icon } from "@expo/vector-icons";
-import type { TextInputProps, ViewStyle } from "react-native";
-import { TextInput, View } from "react-native";
+import type { StyleProp, TextInputProps, ViewStyle } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 
 import { theme } from "../style/theme";
 import CustomIcon from "./CustomIcon";
 
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    borderRadius: 8,
+    borderWidth: 1,
+    flexDirection: "row",
+    height: 56,
+    padding: theme.spacing.s
+  },
+  iconWrapper: {
+    padding: theme.spacing.s
+  },
+  input: {
+    ...theme.textVariants.body,
+    color: theme.colors.body,
+    fontFamily: "ShareTech"
+  }
+});
+
 interface InputProps extends TextInputProps {
   pressed?: boolean;
-  icon: string;
+  icon: keyof typeof Icon.glyphMap;
   error?: string;
-  inputStyle?: ViewStyle;
+  inputStyle?: StyleProp<ViewStyle>;
 }
 
 const Input = forwardRef<TextInput, InputProps>(
@@ -21,30 +40,21 @@ const Input = forwardRef<TextInput, InputProps>(
     return (
       <View
         style={[
+          styles.container,
           {
-            flexDirection: "row",
-            alignItems: "center",
-            padding: theme.spacing.s,
-            borderRadius: 8,
-            height: 56,
-            borderWidth: 1,
             borderColor: themeColor
           },
           inputStyle
         ]}
       >
-        <View style={{ padding: theme.spacing.s }}>
+        <View style={styles.iconWrapper}>
           <Icon name={icon} size={16} color={themeColor} />
         </View>
         <View style={{ flex: 1 }}>
           <TextInput
             placeholderTextColor={theme.colors.lightGrey}
             underlineColorAndroid={"transparent"}
-            style={{
-              ...theme.textVariants.body,
-              color: theme.colors.body,
-              fontFamily: "ShareTech"
-            }}
+            style={styles.input}
             {...props}
             {...{ ref }}
           />

@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAtom } from "jotai";
 import { FontAwesome as Icon } from "@expo/vector-icons";
 import { useCallback } from "react";
-import { useNavigation } from "@react-navigation/native";
 
 import {
   isAuthenticatedAtom,
@@ -20,15 +19,12 @@ export default function RootStack() {
   const [isAuthenticated, seetIsAuthenticated] = useAtom(isAuthenticatedAtom);
   const [, setTodos] = useAtom(todosAtom);
   const [, setStoredTodos] = useAtom(storedTodosAtom);
-  const navigation = useNavigation();
 
   const handleBack = useCallback(() => {
     setStoredTodos([]);
     setTodos([]);
     seetIsAuthenticated(false);
   }, []);
-
-  console.log("auth ", isAuthenticated);
 
   if (!isAuthenticated) {
     return (
