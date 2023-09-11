@@ -40,7 +40,11 @@ const Input = forwardRef<TextInput, InputProps>(
           <TextInput
             placeholderTextColor={theme.colors.lightGrey}
             underlineColorAndroid={"transparent"}
-            style={{ ...theme.textVariants.body, color: theme.colors.body }}
+            style={{
+              ...theme.textVariants.body,
+              color: theme.colors.body,
+              fontFamily: "ShareTech"
+            }}
             {...props}
             {...{ ref }}
           />

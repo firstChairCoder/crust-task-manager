@@ -1,20 +1,27 @@
 import { atom } from "jotai";
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import type { Todo } from "../models/todo";
 
-export const isAuthenticatedAtom = atom<boolean>(false);
+export const storage = createJSONStorage(() => AsyncStorage);
+// const content = JSON.stringify(false);
+export const isAuthenticatedAtom = atomWithStorage("isAuth", false, storage);
 
 export const searchQueryAtom = atom<string>("");
 export const searchInputHasFocusAtom = atom<boolean>(false);
 
 export const newTodoAtom = atom<string>("");
+export const newTodoDescriptionAtom = atom<string>("");
 export const todosAtom = atom<Todo[]>([]);
+export const storedTodosAtom = atomWithStorage("todos", [], storage);
 
 //---------------TODO FUNCTIONS-----------------------------//
-const handleAdd = (todos: Todo[], text: string): Todo[] => [
-  ...todos,
-  { id: Date.now(), todo: text, isDone: false }
-];
+const handleAdd = (
+  todos: Todo[],
+  title: string,
+  description: string
+): Todo[] => [...todos, { id: Date.now(), title, description, isDone: false }];
 
 const handleUpdate = (todos: Todo[], id: number, text: string): Todo[] =>
   todos.map((task) => ({
@@ -34,8 +41,12 @@ const handleDelete = (todos: Todo[], id: number): Todo[] =>
 export const addTodoAtom = atom(
   () => "",
   (get, set) => {
-    set(todosAtom, handleAdd(get(todosAtom), get(newTodoAtom)));
+    set(
+      todosAtom,
+      handleAdd(get(todosAtom), get(newTodoAtom), get(newTodoDescriptionAtom))
+    );
     set(newTodoAtom, "");
+    set(newTodoDescriptionAtom, "");
   }
 );
 

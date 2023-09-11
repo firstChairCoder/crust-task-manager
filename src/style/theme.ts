@@ -42,7 +42,7 @@ export const theme = {
     },
     title: {
       fontFamily: "ShareTech",
-      fontSize: 28
+      fontSize: 40
     },
     header: {
       fontSize: 24,
@@ -53,7 +53,7 @@ export const theme = {
     body: {
       fontFamily: "Poppins",
       fontSize: 16,
-      lineHeight: 24,
+      lineHeight: 20,
       color: colors.body
     }
   }

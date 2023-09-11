@@ -14,7 +14,6 @@ import { useAtom } from "jotai";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { CommonActions } from "@react-navigation/native";
 
 import { theme } from "../style/theme";
 import { Button, Input } from "../components";
@@ -28,6 +27,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: theme.spacing.l
+  },
+  heroText: {
+    ...theme.textVariants.hero,
+    paddingBottom: theme.spacing.xl,
+    textTransform: "uppercase"
   }
 });
 
@@ -43,20 +47,21 @@ export const LoginScreen = ({
   navigation
 }: NativeStackNavigationProp<AppRoutes, "Login">) => {
   const passwordInputRef = useRef<TextInput>(null);
-  const [_, setIsAuth] = useAtom(isAuthenticatedAtom);
+  const [_, setIsAuthenticated] = useAtom(isAuthenticatedAtom);
 
   const { handleChange, handleBlur, handleSubmit, errors, touched } = useFormik(
     {
       validationSchema: LoginSchema,
       initialValues: { email: "", password: "", remember: false },
       onSubmit: () => {
-        setIsAuth(true);
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "Home" }]
-          })
-        );
+        // setIsAuthenticated(true);
+        setIsAuthenticated(async (val: boolean) => !(await val));
+        // navigation.dispatch(
+        //   CommonActions.reset({
+        //     index: 0,
+        //     routes: [{ name: "Home" }]
+        //   })
+        // );
       }
     }
   );
@@ -69,17 +74,8 @@ export const LoginScreen = ({
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={60}
-        // style={styles.container}
       >
-        <Text
-          style={{
-            ...theme.textVariants.hero,
-            textTransform: "uppercase",
-            paddingBottom: theme.spacing.xl
-          }}
-        >
-          Task Manager
-        </Text>
+        <Text style={styles.heroText}>Task Manager</Text>
         <Text
           style={{
             textAlign: "center",

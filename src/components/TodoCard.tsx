@@ -11,7 +11,7 @@ interface TaskCardProps {
   item: Todo;
   // user: User;
 }
-const TodoCard: FC<TaskCardProps> = ({ item }) => {
+const TodoCard: FC<TaskCardProps> = ({ item, onPress }) => {
   const [_, deleteTodo] = useAtom(deleteTodoAtom);
   const [, setIsComplete] = useAtom(completeTodoAtom);
 
@@ -52,19 +52,33 @@ const TodoCard: FC<TaskCardProps> = ({ item }) => {
           <Icon name="check" size={20} color={theme.colors.background} />
         ) : null}
       </Pressable>
-      <Text
-        numberOfLines={1}
+      <Pressable
         style={{
-          includeFontPadding: false,
-          textAlignVertical: "center",
           flex: 1,
-          color: theme.colors.body2,
-          marginHorizontal: 16,
-          textDecorationLine: item.isDone ? "line-through" : "none"
+          flexDirection: "row",
+          height: "100%",
+          alignItems: "center"
         }}
+        onPress={onPress}
       >
-        {item.todo}
-      </Text>
+        <Text
+          numberOfLines={1}
+          style={{
+            ...theme.textVariants.body,
+            includeFontPadding: false,
+            // textAlignVertical: "center",
+            // alignSelf: "center",
+            flex: 1,
+            color: theme.colors.body2,
+            marginHorizontal: 16,
+            // paddingVertical: "100%",
+            textDecorationLine: item.isDone ? "line-through" : "none"
+          }}
+        >
+          {item.title}
+        </Text>
+      </Pressable>
+
       <View
         style={{
           height: "100%",

@@ -5,15 +5,18 @@ import {
   useWindowDimensions,
   View
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets
+} from "react-native-safe-area-context";
 import { Feather as Icon } from "@expo/vector-icons";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 
 import { theme } from "../style/theme";
 import TodoCard from "../components/TodoCard";
-import AddTodoModal from "../components/AddTodoModal";
-import { todosAtom } from "../store/states";
+import { storedTodosAtom, todosAtom } from "../store/states";
+import { TodoModal } from "../components";
 
 const styles = StyleSheet.create({
   container: {
@@ -26,13 +29,34 @@ const styles = StyleSheet.create({
 });
 
 export const HomeScreen = () => {
-  const [todos] = useAtom(todosAtom);
+  const [todos, setTodos] = useAtom(todosAtom);
+  const [storedTodos, setStoredTodos] = useAtom(storedTodosAtom);
   const [visible, setVisible] = useState(false);
+  const [isEditable, setIsEditable] = useState(true);
+  const [viewId, setViewId] = useState<number | null>(null);
 
+  const { bottom } = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
   const hideModal = useCallback(() => setVisible(false), []);
-  const showModal = useCallback(() => setVisible(true), []);
+  const showModal = useCallback(() => {
+    setIsEditable(true);
+    setViewId(null);
+    setVisible(true);
+  }, []);
+  // const showModalWithValues = useCallback((id: number) => {
+
+  // }, [])
+
+  console.log("testingn storage ", storedTodos, " and norms ", todos);
+
+  useEffect(() => {
+    if (todos.length > 0) {
+      setStoredTodos(todos);
+    } else {
+      setTodos(storedTodos);
+    }
+  }, [todos]);
 
   const showDivider = useCallback(
     () => (
@@ -49,42 +73,50 @@ export const HomeScreen = () => {
   );
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-        <FlatList
-          data={todos}
-          renderItem={({ item }) => {
-            return <TodoCard {...{ item }} />;
-          }}
-          ItemSeparatorComponent={showDivider}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingTop: 40 }}
-        />
+      <FlatList
+        data={todos}
+        renderItem={({ item }) => {
+          return (
+            <TodoCard
+              {...{ item }}
+              onPress={() => {
+                setIsEditable(false);
+                setVisible(true);
+                setViewId(item.id);
+              }}
+            />
+          );
+        }}
+        ItemSeparatorComponent={showDivider}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingTop: 40 }}
+      />
 
-        <AddTodoModal
-          visible={visible}
-          setVisible={setVisible}
-          // user={user}
-          onRequestClose={hideModal}
-        />
+      <TodoModal
+        visible={visible}
+        setVisible={setVisible}
+        isEditable={isEditable}
+        onRequestClose={hideModal}
+        viewId={viewId}
+      />
 
-        <Pressable
-          onPress={showModal}
-          style={{
-            position: "absolute",
-            bottom: 16,
-            right: 16,
-            justifyContent: "center",
-            alignItems: "center",
-            height: visible ? 0 : 56,
-            width: visible ? 0 : 56,
-            backgroundColor: theme.colors.primary,
-            borderRadius: 28,
-            overflow: "hidden"
-          }}
-        >
-          <Icon name="plus" color={theme.colors.body} size={34} />
-        </Pressable>
-      </View>
+      <Pressable
+        onPress={showModal}
+        style={{
+          position: "absolute",
+          bottom: bottom + 16,
+          right: theme.spacing.m,
+          justifyContent: "center",
+          alignItems: "center",
+          height: visible ? 0 : 56,
+          width: visible ? 0 : 56,
+          backgroundColor: theme.colors.primary,
+          borderRadius: 28,
+          overflow: "hidden"
+        }}
+      >
+        <Icon name="plus" color={theme.colors.body} size={34} />
+      </Pressable>
     </SafeAreaView>
   );
 };
