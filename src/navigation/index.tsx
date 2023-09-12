@@ -36,7 +36,9 @@ export default function RootStack() {
     );
   } else {
     return (
-      <Navigator screenOptions={{ gestureEnabled: false }}>
+      <Navigator
+        screenOptions={{ gestureEnabled: false, headerTitleAlign: "center" }}
+      >
         <Group>
           <Screen
             name="Home"
@@ -49,7 +51,7 @@ export default function RootStack() {
                   name="chevron-circle-left"
                   color={theme.colors.body}
                   size={wp(7)}
-                  style={{ alignSelf: "center", marginBottom: theme.spacing.s }}
+                  style={{ marginBottom: theme.spacing.s }}
                   onPress={handleBack}
                 />
               ),

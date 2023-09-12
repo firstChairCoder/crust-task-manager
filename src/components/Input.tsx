@@ -21,8 +21,7 @@ const styles = StyleSheet.create({
   },
   input: {
     ...theme.textVariants.body,
-    color: theme.colors.body,
-    fontFamily: "ShareTech"
+    color: theme.colors.body
   }
 });
 
